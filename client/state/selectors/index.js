@@ -42,6 +42,7 @@ export getContactDetailsExtraCache from './get-contact-details-extra-cache';
 export getCredentialsAutoConfigStatus from './get-credentials-auto-config-status';
 export getCurrentLocaleSlug from './get-current-locale-slug';
 export getCurrentPlanPurchaseId from './get-current-plan-purchase-id';
+export getCurrentRoute from './get-current-route';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getCurrentUserRegisterDate from './get-current-user-register-date';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
