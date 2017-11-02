@@ -176,7 +176,7 @@ class PromotionUpdate extends React.Component {
 		const saveEnabled = isValid && ! busy && hasEdits;
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<PromotionHeader
 					site={ site }
 					promotion={ promotion }

@@ -137,7 +137,7 @@ class PromotionCreate extends React.Component {
 			promotion,
 			hasEdits,
 			products,
-			productCategories
+			productCategories,
 		} = this.props;
 		const { busy } = this.state;
 
@@ -145,7 +145,7 @@ class PromotionCreate extends React.Component {
 		const saveEnabled = isValid && ! busy && hasEdits;
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<PromotionHeader
 					site={ site }
 					promotion={ promotion }
