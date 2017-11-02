@@ -9,13 +9,13 @@ function getSectionsModule( sections ) {
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		dependencies = [
 			"var config = require( 'config' ),",
-			"\tpage = require( 'page' ),",
-			"\tReact = require( 'react' ),",
-			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
-			"\tLoadingError = require( 'layout/error' ),",
-			"\tcontroller = require( 'controller' ),",
-			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
-			"\tpreloadHub = require( 'sections-preload' ).hub;",
+			"	page = require( 'page' ),",
+			"	React = require( 'react' ),",
+			"	activateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
+			"	LoadingError = require( 'layout/error' ),",
+			"	controller = require( 'controller' ),",
+			"	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
+			"	preloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
@@ -50,8 +50,8 @@ function getSectionsModule( sections ) {
 
 	dependencies = [
 		"var config = require( 'config' ),",
-		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n"
+		"	page = require( 'page' ),",
+		"	controller = require( 'controller' );\n"
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
