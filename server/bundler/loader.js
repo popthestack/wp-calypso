@@ -16,8 +16,8 @@ function getSectionsModule( sections ) {
 			"	controller = require( 'controller' ),",
 			"	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"	preloadHub = require( 'sections-preload' ).hub;",
-			'\n',
-			'var _loadedSections = {};\n'
+			'',
+			'var _loadedSections = {};'
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
@@ -34,9 +34,9 @@ function getSectionsModule( sections ) {
 			'	' + loadSection,
 			'	}',
 			'}',
-			'\n',
+			'',
 			"preloadHub.on( 'preload', preload );",
-			'\n',
+			'',
 			'module.exports = {',
 			'	get: function() {',
 			'		return ' + JSON.stringify( sections ) + ';',
@@ -51,7 +51,8 @@ function getSectionsModule( sections ) {
 	dependencies = [
 		"var config = require( 'config' ),",
 		"	page = require( 'page' ),",
-		"	controller = require( 'controller' );\n"
+		"	controller = require( 'controller' );",
+		''
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
@@ -123,7 +124,9 @@ function splitTemplate( path, section ) {
 		'		return;',
 		'	},',
 		sectionNameString + ' );',
-		'} );\n'
+		'} );',
+		'',
+		''
 	];
 
 	return result.join( '\n' );
@@ -153,7 +156,8 @@ function requireTemplate( section ) {
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
-			'} );\n'
+			'} );',
+			''
 		] );
 	}, [] );
 
@@ -164,7 +168,7 @@ function singleEnsure( sectionName ) {
 	var result = [
 		'case ' + JSON.stringify( sectionName ) + ':',
 		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
-		'	break;\n'
+		'	break;'
 	];
 
 	return result.join( '\n' );
