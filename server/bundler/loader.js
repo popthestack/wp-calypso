@@ -1,6 +1,14 @@
 var config = require( 'config' ),
 	utils = require( './utils' );
 
+function indent( value, indent ) {
+	const lines = JSON.stringify( value, null, '\t' );
+
+	return lines.split( '\n' ).map( ( line, index ) => {
+		return ( index > 0 ? indent : '' ) + line;
+	} ).join( '\n' );
+}
+
 function getSectionsModule( sections ) {
 	var dependencies,
 		loadSection = '',
@@ -31,7 +39,7 @@ function getSectionsModule( sections ) {
 			dependencies,
 			'function preload( sectionName ) {',
 			'	switch ( sectionName ) {',
-			'	' + loadSection,
+			loadSection,
 			'	}',
 			'}',
 			'',
@@ -39,10 +47,10 @@ function getSectionsModule( sections ) {
 			'',
 			'module.exports = {',
 			'	get: function() {',
-			'		return ' + JSON.stringify( sections ) + ';',
+			'		return ' + indent( sections, '\t\t' ) + ';',
 			'	},',
 			'	load: function() {',
-			'		' + sectionLoaders,
+			sectionLoaders,
 			'	}',
 			'};'
 		].join( '\n' );
@@ -89,41 +97,42 @@ function splitTemplate( path, section ) {
 		result;
 
 	result = [
-		'page( ' + pathRegex + ', function( context, next ) {',
-		'	var envId = ' + envIdString + ';',
-		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
-		'		return next();',
-		'	}',
-		'	if ( _loadedSections[ ' + moduleString + ' ] ) {',
-		'		controller.setSection( ' + sectionString + ' )( context );',
-		'		context.store.dispatch( activateNextLayoutFocus() );',
-		'		return next();',
-		'	}',
-		'	if ( config.isEnabled( "restore-last-location" ) && restoreLastSession( context.path ) ) {',
-		'		return;',
-		'	}',
-		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
-		'	require.ensure([], function( require ) {',
-		'		context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
-		'		controller.setSection( ' + sectionString + ' )( context );',
-		'		if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
-		'			require( ' + moduleString + ' )( controller.clientRouter );',
-		'			_loadedSections[ ' + moduleString + ' ] = true;',
-		'		}',
-		'		context.store.dispatch( activateNextLayoutFocus() );',
-		'		next();',
-		'	}, function onError( error ) {',
-		'		if ( ! LoadingError.isRetry() ) {',
-		'			console.warn( error );',
-		'			LoadingError.retry( ' + sectionNameString + ' );',
-		'		} else {',
-		'			console.error( error );',
-		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
-		'			LoadingError.show( ' + sectionNameString + ' );',
-		'		}',
-		'	},',
-		sectionNameString + ' );',
-		'} );',
+		'		page( ' + pathRegex + ', function( context, next ) {',
+		'			var envId = ' + envIdString + ';',
+		'			if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
+		'				return next();',
+		'			}',
+		'			if ( _loadedSections[ ' + moduleString + ' ] ) {',
+		'				controller.setSection( ' + sectionString + ' )( context );',
+		'				context.store.dispatch( activateNextLayoutFocus() );',
+		'				return next();',
+		'			}',
+		'			if ( config.isEnabled( "restore-last-location" ) && restoreLastSession( context.path ) ) {',
+		'				return;',
+		'			}',
+		'			context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
+		'			require.ensure( [],',
+		'				function( require ) {',
+		'					context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
+		'					controller.setSection( ' + sectionString + ' )( context );',
+		'					if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
+		'						require( ' + moduleString + ' )( controller.clientRouter );',
+		'						_loadedSections[ ' + moduleString + ' ] = true;',
+		'					}',
+		'					context.store.dispatch( activateNextLayoutFocus() );',
+		'					next();',
+		'				}, function onError( error ) {',
+		'					if ( ! LoadingError.isRetry() ) {',
+		'						console.warn( error );',
+		'						LoadingError.retry( ' + sectionNameString + ' );',
+		'					} else {',
+		'						console.error( error );',
+		'						context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
+		'						LoadingError.show( ' + sectionNameString + ' );',
+		'					}',
+		'				}, ' + sectionNameString,
+		'			);',
+		'		} );',
 		'',
 		''
 	];
@@ -165,8 +174,8 @@ function requireTemplate( section ) {
 
 function singleEnsure( sectionName ) {
 	var result = [
-		'case ' + JSON.stringify( sectionName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
+		'		case ' + JSON.stringify( sectionName ) + ':',
+		'			return require.ensure( [], function() {}, ' + JSON.stringify( sectionName ) + ' );',
 	];
 
 	return result.join( '\n' );
