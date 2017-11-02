@@ -121,7 +121,6 @@ function splitTemplate( path, section ) {
 		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 		'			LoadingError.show( ' + sectionNameString + ' );',
 		'		}',
-		'		return;',
 		'	},',
 		sectionNameString + ' );',
 		'} );',
@@ -168,7 +167,6 @@ function singleEnsure( sectionName ) {
 	var result = [
 		'case ' + JSON.stringify( sectionName ) + ':',
 		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
-		'	break;'
 	];
 
 	return result.join( '\n' );
