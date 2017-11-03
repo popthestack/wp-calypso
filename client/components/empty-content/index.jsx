@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import { noop } from 'lodash';
 
 class EmptyContent extends Component {
 	static propTypes = {
@@ -18,6 +18,7 @@ class EmptyContent extends Component {
 		actionURL: PropTypes.string,
 		actionCallback: PropTypes.func,
 		actionTarget: PropTypes.string,
+		actionHoverCallback: PropTypes.func,
 		secondaryAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		secondaryActionURL: PropTypes.string,
 		secondaryActionCallback: PropTypes.func,
@@ -30,6 +31,7 @@ class EmptyContent extends Component {
 		title: "You haven't created any content yet.",
 		illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
 		isCompact: false,
+		actionHoverCallback: noop,
 	};
 
 	static displayName = 'EmptyContent';
@@ -45,6 +47,8 @@ class EmptyContent extends Component {
 					className="empty-content__action button is-primary"
 					onClick={ this.props.actionCallback }
 					href={ this.props.actionURL }
+					onMouseEnter={ this.props.actionHoverCallback }
+					onTouchStart={ this.props.actionHoverCallback }
 				>
 					{ this.props.action }
 				</a>
@@ -59,6 +63,8 @@ class EmptyContent extends Component {
 				<a
 					className="empty-content__action button is-primary"
 					href={ this.props.actionURL }
+					onMouseEnter={ this.props.actionHoverCallback }
+					onTouchStart={ this.props.actionHoverCallback }
 					{ ...targetProp }
 				>
 					{ this.props.action }
