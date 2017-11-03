@@ -10,24 +10,10 @@ function indent( value, indentation ) {
 }
 
 function getSectionsModule( sections ) {
-	let dependencies,
-		sectionLoaders = '';
+	let sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		let sectionPreLoaders = '';
-
-		dependencies = [
-			"var config = require( 'config' ),",
-			"	page = require( 'page' ),",
-			"	React = require( 'react' ),",
-			"	activateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
-			"	LoadingError = require( 'layout/error' ),",
-			"	controller = require( 'controller' ),",
-			"	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
-			"	preloadHub = require( 'sections-preload' ).hub;",
-			'',
-			'var _loadedSections = {};'
-		].join( '\n' );
 
 		sections.forEach( function( section ) {
 			sectionPreLoaders += getSectionPreLoaderTemplate( section.name );
@@ -37,28 +23,38 @@ function getSectionsModule( sections ) {
 			} );
 		} );
 
-		return [
-			dependencies,
-			'function preload( sectionName ) {',
-			'	switch ( sectionName ) {',
-			sectionPreLoaders,
-			'	}',
-			'}',
-			'',
-			"preloadHub.on( 'preload', preload );",
-			'',
-			'module.exports = {',
-			'	get: function() {',
-			'		return ' + indent( sections, '\t\t' ) + ';',
-			'	},',
-			'	load: function() {',
-			sectionLoaders,
-			'	}',
-			'};'
-		].join( '\n' );
+		return `
+var config = require( 'config' ),
+	page = require( 'page' ),
+	React = require( 'react' ),
+	activateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,
+	LoadingError = require( 'layout/error' ),
+	controller = require( 'controller' ),
+	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,
+	preloadHub = require( 'sections-preload' ).hub;
+
+var _loadedSections = {};
+
+function preload( sectionName ) {
+	switch ( sectionName ) {
+${ sectionPreLoaders }
+	}
+}
+
+preloadHub.on( 'preload', preload );
+
+module.exports = {
+	get: function() {
+		return ${ indent( sections, '\t\t' ) };
+	},
+	load: function() {
+${ sectionLoaders }
+	}
+};
+`;
 	}
 
-	dependencies = [
+	const dependencies = [
 		"var config = require( 'config' ),",
 		"	page = require( 'page' ),",
 		"	controller = require( 'controller' );",
