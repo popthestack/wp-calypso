@@ -16,7 +16,7 @@ function getSectionsModule( sections ) {
 		let sectionPreLoaders = '';
 
 		sections.forEach( function( section ) {
-			sectionPreLoaders += getSectionPreLoaderTemplate( section.name );
+			sectionPreLoaders += getSectionPreLoaderTemplate( section );
 
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
@@ -32,11 +32,22 @@ var config = require( 'config' ),
 	controller = require( 'controller' ),
 	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,
 	preloadHub = require( 'sections-preload' ).hub,
+	switchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,
 	debug = require( 'debug' )( 'calypso:bundler:loader' );
 
 var _loadedSections = {};
 
 function preload( sectionName ) {
+	var loadCSS = function( sectionName, cssUrls ) {
+		var url = cssUrls.ltr;
+
+		if ( typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ) {
+			url = cssUrls.rtl;
+		}
+
+		switchCSS( 'section-css', url );
+	};
+
 	switch ( sectionName ) {
 ${ sectionPreLoaders }
 	}
@@ -169,17 +180,24 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function getSectionPreLoaderTemplate( sectionName ) {
+function getSectionPreLoaderTemplate( section ) {
+	let cssLoader = '', bundleTypes = 'Javascript';
+
+	if ( section.cssUrls ) {
+		cssLoader = `loadCSS( 'section-css', ${ indent( section.cssUrls, '\t\t\t' ) } );`;
+		bundleTypes += ' and CSS';
+	}
+
 	const sectionNameString = JSON.stringify( section.name );
 
-	const result = [
-		'		case ' + sectionNameString + ':',
-		'			debug( \'Pre-loading Javascript for ' + sectionNameString + ' section\' );',
-    '',
-		'			return require.ensure( [], function() {}, ' + sectionNameString + ' );',
-	];
+	return `
+		case ${ sectionNameString }:
+			debug( 'Pre-loading ${ bundleTypes } for ${ sectionNameString } section' );
 
-	return result.join( '\n' );
+			${ cssLoader }
+
+			return require.ensure( [], function() {}, ${ sectionNameString } );
+`;
 }
 
 function sectionsWithCSSUrls( sections ) {
