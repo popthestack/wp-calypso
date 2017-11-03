@@ -49,7 +49,7 @@ function preload( sectionName ) {
 	};
 
 	switch ( sectionName ) {
-${ sectionPreLoaders }
+${ sectionPreLoaders.replace( /^\n|\n+$/g, '' ) }
 	}
 }
 
@@ -60,7 +60,7 @@ module.exports = {
 		return ${ indent( sections, '\t\t' ) };
 	},
 	load: function() {
-${ sectionLoaders }
+${ sectionLoaders.replace( /^\n|\n+$/g, '' ) }
 	}
 };
 `;
@@ -190,7 +190,7 @@ function getSectionPreLoaderTemplate( section ) {
 
 	const sectionNameString = JSON.stringify( section.name );
 
-	return `
+	const result = `
 		case ${ sectionNameString }:
 			debug( 'Pre-loading ${ bundleTypes } for ${ sectionNameString } section' );
 
@@ -198,6 +198,9 @@ function getSectionPreLoaderTemplate( section ) {
 
 			return require.ensure( [], function() {}, ${ sectionNameString } );
 `;
+
+	// Consolidate consecutive blank lines
+	return result.replace( /([ \t]*\n){3,}/g, '\n\n' );
 }
 
 function sectionsWithCSSUrls( sections ) {
