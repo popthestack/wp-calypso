@@ -1,16 +1,16 @@
-var config = require( 'config' ),
+const config = require( 'config' ),
 	utils = require( './utils' );
 
-function indent( value, indent ) {
+function indent( value, indentation ) {
 	const lines = JSON.stringify( value, null, '\t' );
 
 	return lines.split( '\n' ).map( ( line, index ) => {
-		return ( index > 0 ? indent : '' ) + line;
+		return ( index > 0 ? indentation : '' ) + line;
 	} ).join( '\n' );
 }
 
 function getSectionsModule( sections ) {
-	var dependencies,
+	let dependencies,
 		sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
@@ -81,7 +81,7 @@ function getSectionsModule( sections ) {
 }
 
 function getRequires( sections ) {
-	var content = '';
+	let content = '';
 
 	sections.forEach( function( section ) {
 		content += requireTemplate( section );
@@ -91,14 +91,13 @@ function getRequires( sections ) {
 }
 
 function splitTemplate( path, section ) {
-	var pathRegex = getPathRegex( path ),
+	const pathRegex = getPathRegex( path ),
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
-		envIdString = JSON.stringify( section.envId ),
-		result;
+		envIdString = JSON.stringify( section.envId );
 
-	result = [
+	const result = [
 		'		page( ' + pathRegex + ', function( context, next ) {',
 		'			var envId = ' + envIdString + ';',
 		'			if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
@@ -151,10 +150,9 @@ function getPathRegex( pathString ) {
 }
 
 function requireTemplate( section ) {
-	var pathRegex,
-		result;
+	let pathRegex;
 
-	result = section.paths.reduce( function( acc, path ) {
+	const result = section.paths.reduce( function( acc, path ) {
 		pathRegex = getPathRegex( path );
 
 		return acc.concat( [
@@ -175,7 +173,7 @@ function requireTemplate( section ) {
 }
 
 function getSectionPreLoaderTemplate( sectionName ) {
-	var result = [
+	const result = [
 		'		case ' + JSON.stringify( sectionName ) + ':',
 		'			return require.ensure( [], function() {}, ' + JSON.stringify( sectionName ) + ' );',
 	];
