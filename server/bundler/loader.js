@@ -11,10 +11,11 @@ function indent( value, indent ) {
 
 function getSectionsModule( sections ) {
 	var dependencies,
-		loadSection = '',
 		sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
+		let sectionPreLoaders = '';
+
 		dependencies = [
 			"var config = require( 'config' ),",
 			"	page = require( 'page' ),",
@@ -29,7 +30,8 @@ function getSectionsModule( sections ) {
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+			sectionPreLoaders += getSectionPreLoaderTemplate( section.name );
+
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
@@ -39,7 +41,7 @@ function getSectionsModule( sections ) {
 			dependencies,
 			'function preload( sectionName ) {',
 			'	switch ( sectionName ) {',
-			loadSection,
+			sectionPreLoaders,
 			'	}',
 			'}',
 			'',
@@ -172,7 +174,7 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function singleEnsure( sectionName ) {
+function getSectionPreLoaderTemplate( sectionName ) {
 	var result = [
 		'		case ' + JSON.stringify( sectionName ) + ':',
 		'			return require.ensure( [], function() {}, ' + JSON.stringify( sectionName ) + ' );',
