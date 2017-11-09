@@ -4,6 +4,7 @@
  * @format
  */
 
+import cookie from 'cookie';
 import { get } from 'lodash';
 
 /**
@@ -53,10 +54,6 @@ const isRemoteSiteOnSitesList = state => {
 	return !! getJetpackSiteByUrl( state, remoteUrl );
 };
 
-const getSessions = state => {
-	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
-};
-
 const getSSO = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackSSO' ] );
 };
@@ -65,14 +62,8 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const site = urlToSlug( siteSlug );
-	const sessions = getSessions( state );
-
-	if ( sessions[ site ] && sessions[ site ].timestamp ) {
-		return ! isStale( sessions[ site ].timestamp );
-	}
-
-	return false;
+	const cookies = cookie.parse( document.cookie );
+	return cookies.jetpack_connect_session_url === urlToSlug( siteSlug );
 };
 
 const isRedirectingToWpAdmin = function( state ) {
@@ -81,11 +72,11 @@ const isRedirectingToWpAdmin = function( state ) {
 };
 
 const getFlowType = function( state, siteSlug ) {
-	const sessions = getSessions( state );
 	siteSlug = urlToSlug( siteSlug );
+	const cookies = cookie.parse( document.cookie );
 
-	if ( siteSlug && sessions[ siteSlug ] ) {
-		return sessions[ siteSlug ].flowType;
+	if ( isCalypsoStartedConnection( state, siteSlug ) ) {
+		return cookies.jetpack_connect_session_flowtype;
 	}
 	return false;
 };
@@ -173,7 +164,6 @@ export default {
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
-	getSessions,
 	getSSO,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,

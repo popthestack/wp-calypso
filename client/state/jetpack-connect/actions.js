@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 import { omit, pick } from 'lodash';
 import page from 'page';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -63,6 +64,15 @@ const remoteAuthPath =
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
 
+const persistSession = ( url, flowType ) => {
+	const options = {
+		maxAge: 300,
+		path: '/',
+	};
+	document.cookie = cookie.serialize( 'jetpack_connect_session_url', urlToSlug( url ), options );
+	document.cookie = cookie.serialize( 'jetpack_connect_session_flowtype', flowType, options );
+};
+
 export default {
 	confirmJetpackInstallStatus( status ) {
 		return dispatch => {
@@ -88,11 +98,7 @@ export default {
 				return;
 			}
 			if ( isUrlOnSites ) {
-				dispatch( {
-					type: JETPACK_CONNECT_CHECK_URL,
-					url: url,
-					flowType: flowType,
-				} );
+				persistSession( url, flowType );
 				setTimeout( () => {
 					dispatch( {
 						type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -113,6 +119,7 @@ export default {
 			}
 			_fetching[ url ] = true;
 			setTimeout( () => {
+				persistSession( url, flowType );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL,
 					url: url,
