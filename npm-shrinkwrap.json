@@ -1547,8 +1547,8 @@
       "integrity": "sha512-+hN/Zh2D08Mx65pZ/4g5bsmNiZUuChDiQfTUQ7qJr4/kuopCr88xZsAXv6mBoZEsUI4OuGHlX59qE94K2mMW8Q=="
     },
     "binary-extensions": {
-      "version": "1.10.0",
-      "integrity": "sha1-muuabF6IY4qtFx4Wf1kAq+JINdA="
+      "version": "1.11.0",
+      "integrity": "sha1-RqoXUftqL5PuXmibsQh9SxTGwgU="
     },
     "bindings": {
       "version": "1.2.1",
@@ -2059,8 +2059,8 @@
       }
     },
     "ci-info": {
-      "version": "1.1.1",
-      "integrity": "sha512-vHDDF/bP9RYpTWtUhpJRhCFdvvp3iDWvEbuDbWgvjUrNGV1MXJrE0MPcwGtEled04m61iwdBLUIHZtDgzWS4ZQ==",
+      "version": "1.1.2",
+      "integrity": "sha512-uTGIPNx/nSpBdsF6xnseRXLLtfr9VLqkz8ZqHXr3Y7b6SftyRxBGjwMtJj1OhNbmlc1wZzLNAlAcvyIiE8a6ZA==",
       "dev": true
     },
     "cipher-base": {
@@ -6337,14 +6337,15 @@
       }
     },
     "i18n-calypso": {
-      "version": "1.8.1",
-      "integrity": "sha1-+sxCdweuPZInSuLNII8dZJVnE/Q=",
+      "version": "1.8.4-alpha.4",
+      "integrity": "sha512-yJSnaDoB9/3o1MxZ03cc+J9rp9+0vAOnv5umhDXh2LUijTlfC6kdAwft9Zzc6velP2BD135lPGNUBmgLuBvbgA==",
       "requires": {
         "async": "1.5.2",
         "commander": "2.11.0",
+        "create-react-class": "15.6.2",
         "debug": "2.2.0",
         "globby": "6.1.0",
-        "interpolate-components": "1.1.0",
+        "interpolate-components": "1.1.1",
         "jed": "1.0.2",
         "jstimezonedetect": "1.0.5",
         "lodash.assign": "4.2.0",
@@ -6498,8 +6499,8 @@
       }
     },
     "interpolate-components": {
-      "version": "1.1.0",
-      "integrity": "sha1-iaZUroQm8guI4WE62AFNGeQKBpQ=",
+      "version": "1.1.1",
+      "integrity": "sha1-aZ//RdFSXpjHzntxWVkdmStd1t8=",
       "requires": {
         "react": "15.6.2",
         "react-addons-create-fragment": "15.6.2",
@@ -6543,7 +6544,7 @@
       "version": "1.0.1",
       "integrity": "sha1-dfFmQrSA8YenEcgUFh/TpKdlWJg=",
       "requires": {
-        "binary-extensions": "1.10.0"
+        "binary-extensions": "1.11.0"
       }
     },
     "is-buffer": {
@@ -6566,7 +6567,7 @@
       "integrity": "sha1-9zkzayYyNlBhqdSCcM1WrjNpMY4=",
       "dev": true,
       "requires": {
-        "ci-info": "1.1.1"
+        "ci-info": "1.1.2"
       }
     },
     "is-date-object": {
