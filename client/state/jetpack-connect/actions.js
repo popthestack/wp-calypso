@@ -52,7 +52,7 @@ import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
-import { JPC_PLANS_PAGE } from './constants';
+import { JETPACK_CONNECT_TTL_SECONDS, JPC_PLANS_PAGE } from './constants';
 
 /**
  *  Local variables;
@@ -66,7 +66,7 @@ const remoteActivatePath = '/wp-admin/plugins.php';
 
 const persistSession = ( url, flowType ) => {
 	const options = {
-		maxAge: 300,
+		maxAge: JETPACK_CONNECT_TTL_SECONDS,
 		path: '/',
 	};
 	document.cookie = cookie.serialize( 'jetpack_connect_session_url', urlToSlug( url ), options );
