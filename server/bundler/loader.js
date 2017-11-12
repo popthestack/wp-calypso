@@ -33,14 +33,14 @@ function getSectionsModule( sections ) {
 		return [
 			dependencies,
 			'function preload( sectionName ) {',
-			'	var loadCSS = function( sectionName, cssUrls ) {',
-			'		var url = cssUrls.ltr;',
+			'	var loadCSS = function( id, urls ) {',
+			'		var url = urls.ltr;',
 			'',
 			'		if ( typeof document !== \'undefined\' && document.documentElement.dir === \'rtl\' ) {',
-			'			url = cssUrls.rtl;',
+			'			url = urls.rtl;',
 			'		}',
 			'',
-			'		switchCSS( \'section-css\', url );',
+			'		switchCSS( \'section-css-\' + id, url );',
 			'	};',
 			'',
 			'	switch ( sectionName ) {',
@@ -171,8 +171,8 @@ function requireTemplate( section ) {
 function getSectionPreLoaderTemplate( section ) {
 	let cssLoader = '', bundleTypes = 'Javascript';
 
-	if ( section.cssUrls ) {
-		cssLoader = `loadCSS( 'section-css', ${ JSON.stringify( section.cssUrls ) } );`;
+	if ( section.css ) {
+		cssLoader = `loadCSS( ${ JSON.stringify( section.css.id ) }, ${ JSON.stringify( section.css.urls ) } );`;
 		bundleTypes += ' and CSS';
 	}
 
@@ -190,7 +190,10 @@ function getSectionPreLoaderTemplate( section ) {
 
 function sectionsWithCSSUrls( sections ) {
 	return sections.map( section => Object.assign( {}, section, section.css && {
-		cssUrls: utils.getCssUrls( section.css ),
+		css: {
+			id: section.css,
+			urls: utils.getCssUrls( section.css ),
+		}
 	} ) );
 }
 
