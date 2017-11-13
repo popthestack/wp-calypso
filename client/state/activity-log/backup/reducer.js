@@ -44,27 +44,6 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 			};
 
 		case REWIND_BACKUP_UPDATE_PROGRESS:
-			return {
-				backupPoint: action.backupPoint,
-				downloadId: action.downloadId,
-				progress: action.progress,
-				rewindId: action.rewindId,
-				startedAt: action.startedAt,
-				downloadCount: action.downloadCount,
-				validUntil: action.validUntil,
-				url: action.url,
-			};
-
-		case REWIND_BACKUP_DISMISS_PROGRESS:
-			return null;
-
-		default:
-			return state;
-	}
-} );
-
-export const backupReady = keyedReducer( 'siteId', ( state = undefined, action ) => {
-	switch ( action.type ) {
 		case REWIND_BACKUP_LIST_UPDATE:
 			return {
 				backupPoint: action.backupPoint,

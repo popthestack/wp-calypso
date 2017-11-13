@@ -59,10 +59,7 @@ import {
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
 	getBackupProgress,
-	getBackupReady,
 } from 'state/selectors';
-import NoticeAction from 'components/notice/notice-action';
-import Notice from 'components/notice';
 
 /**
  * Module constants
@@ -216,7 +213,6 @@ class ActivityLog extends Component {
 			timestamp: PropTypes.string.isRequired,
 		} ),
 		backupProgress: PropTypes.object,
-		backupReady: PropTypes.object,
 		changePeriod: PropTypes.func,
 		requestedRestoreActivity: PropTypes.shape( {
 			rewindId: PropTypes.string.isRequired,
@@ -429,38 +425,6 @@ class ActivityLog extends Component {
 		);
 	}
 
-	/**
-	 * Displays a message stating that a backup is ready to download.
-	 * This is only shown if user hasn't downloaded it previously.
-	 *
-	 * @returns {object} Notification if a backup is available for download.
-	 */
-	renderBackupReady() {
-		const { backupReady } = this.props;
-		if ( ! backupReady || 0 < backupReady.downloadCount ) {
-			return null;
-		}
-		const { translate, moment } = this.props;
-		const { startedAt, validUntil, url } = backupReady;
-		return (
-			<Notice
-				status="is-info"
-				text={ translate(
-					'The downloadable backup created on {{started /}} is ready.{{br /}}It will be valid until {{valid /}}.',
-					{
-						components: {
-							started: <b>{ this.applySiteOffset( moment.utc( startedAt ) ).format( 'LLLL' ) }</b>,
-							br: <br />,
-							valid: <b>{ this.applySiteOffset( moment.utc( validUntil ) ).format( 'LLLL' ) }</b>,
-						},
-					}
-				) }
-			>
-				<NoticeAction href={ url }>{ 'Download' }</NoticeAction>
-			</Notice>
-		);
-	}
-
 	renderErrorMessage() {
 		if ( ! rewindEnabledByConfig ) {
 			return null;
@@ -634,7 +598,6 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
-				{ this.renderBackupReady() }
 				{ this.renderActionProgress() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ isNull( logs ) && (
@@ -750,7 +713,6 @@ export default connect(
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
-			backupReady: getBackupReady( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
