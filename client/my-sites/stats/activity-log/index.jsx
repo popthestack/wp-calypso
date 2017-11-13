@@ -28,7 +28,7 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
-import QueryRewindBackups from 'components/data/query-rewind-backups';
+import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -347,11 +347,11 @@ class ActivityLog extends Component {
 		}
 
 		if ( !! backupProgress ) {
-			cards.push(
-				isEmpty( backupProgress.url )
-					? this.getProgressBanner( siteId, backupProgress, 'backup' )
-					: this.getEndBanner( siteId, backupProgress )
-			);
+			if ( isEmpty( backupProgress.url ) ) {
+				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
+			} else if ( Date.now() < Date.parse( backupProgress.validUntil ) ) {
+				cards.push( this.getEndBanner( siteId, backupProgress ) );
+			}
 		}
 
 		return cards;
@@ -591,7 +591,7 @@ class ActivityLog extends Component {
 					siteId={ siteId }
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
-				{ siteId && <QueryRewindBackups siteId={ siteId } /> }
+				{ siteId && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />

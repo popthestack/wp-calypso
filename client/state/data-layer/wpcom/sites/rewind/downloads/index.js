@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { get, isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +48,9 @@ const fetchProgress = ( { dispatch }, action ) => {
 			{
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`,
+				path: action.downloadId
+					? `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`
+					: `/sites/${ action.siteId }/rewind/downloads`,
 				body: {
 					downloadId: action.downloadId,
 				},
@@ -68,8 +71,19 @@ const fromApi = data => ( {
 	url: data.url,
 } );
 
-export const updateProgress = ( { dispatch }, { siteId, downloadId }, data ) =>
-	dispatch( updateRewindBackupProgress( siteId, downloadId, data ) );
+export const updateProgress = ( { dispatch }, { siteId, downloadId }, apiData ) => {
+	const data = fromApi( apiData );
+	if ( data.downloadId ) {
+		dispatch( updateRewindBackupProgress( siteId, downloadId, data ) );
+	} else {
+		const lastBackupCreated = get( apiData, [ '0', 'downloadId' ], null );
+		if ( isInteger( lastBackupCreated ) ) {
+			dispatch(
+				updateRewindBackupProgress( siteId, lastBackupCreated, get( apiData, [ '0' ], {} ) )
+			);
+		}
+	}
+};
 
 export const announceError = ( { dispatch } ) =>
 	dispatch(
@@ -80,8 +94,6 @@ export const announceError = ( { dispatch } ) =>
 
 export default {
 	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequest( fetchProgress, updateProgress, announceError, {
-			fromApi,
-		} ),
+		dispatchRequest( fetchProgress, updateProgress, announceError ),
 	],
 };

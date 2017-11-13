@@ -8,7 +8,6 @@ import {
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS_PROGRESS,
 	REWIND_BACKUP_UPDATE_PROGRESS,
-	REWIND_BACKUP_LIST_UPDATE,
 } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
@@ -44,7 +43,6 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 			};
 
 		case REWIND_BACKUP_UPDATE_PROGRESS:
-		case REWIND_BACKUP_LIST_UPDATE:
 			return {
 				backupPoint: action.backupPoint,
 				downloadId: action.downloadId,
