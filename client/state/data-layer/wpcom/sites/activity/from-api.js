@@ -121,7 +121,7 @@ const getActivityDescription = item => {
 			return [ 'Post updated', post( name ) ];
 
 		case 'plugin__activated':
-			return [ 'Plugin activated', 'activated plugin ', post( name ) ];
+			return [ 'Plugin activated', 'activated plugin ', plugin( name ) ];
 
 		case 'plugin__autoupdated':
 			return [
@@ -135,6 +135,13 @@ const getActivityDescription = item => {
 				'Plugin update available',
 				firstPlugin( items[ 0 ].name ),
 				' plugin has an update available',
+			];
+
+		case 'plugin__updated':
+			return [
+				'Plugin updated',
+				firstPlugin( items[ 0 ].name ),
+				` plugin has been updated to version ${ items[ 0 ].object_version }`,
 			];
 
 		case 'plugin__deleted':
