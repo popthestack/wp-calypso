@@ -6,7 +6,7 @@
 
 import debugModule from 'debug';
 import store from 'store';
-import { assign, find, isEmpty, some } from 'lodash';
+import { assign, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -167,28 +167,44 @@ SitesList.prototype.createSiteObject = function( site ) {
 		return Site( site );
 	}
 };
+
+const jetpackUrls = new Map();
+
+const addJetpackSiteUrl = ( { ID, URL } ) => {
+	const baseUrl = withoutHttp( URL );
+	let siteSet = jetpackUrls.get( baseUrl );
+
+	if ( undefined === siteSet ) {
+		siteSet = new Set();
+		jetpackUrls.set( baseUrl, siteSet );
+	}
+
+	siteSet.add( ID );
+};
+
 /**
  * Marks collisions between .com sites and Jetpack sites that have the same URL
  * Add the hasConflict attribute to .com sites that collide with Jetpack sites.
  *
  * @api private
  *
+ * @param {Array} sites list of stored sites
  */
 SitesList.prototype.markCollisions = function( sites ) {
-	sites.forEach( function( site, index, collisions ) {
-		var hasCollision;
+	// first make sure all Jetpack sites are accounted for
+	sites.forEach( site => site.jetpack && addJetpackSiteUrl( site ) );
 
+	// then find non-Jetpack sites sharing the same URL
+	sites.forEach( site => {
 		if ( ! site.jetpack ) {
-			hasCollision = some( collisions, function( someSite ) {
-				return (
-					someSite.jetpack &&
-					site.ID !== someSite.ID &&
-					withoutHttp( site.URL ) === withoutHttp( someSite.URL )
-				);
-			} );
-			if ( hasCollision ) {
-				site.hasConflict = true;
-			}
+			return;
+		}
+
+		const jetpackSites = jetpackUrls.get( withoutHttp( site.URL ) );
+		const siteCount = jetpackSites.size;
+
+		if ( siteCount > 1 || ( siteCount === 1 || ! jetpackSites.has( site.ID ) ) ) {
+			site.hasConflict = true;
 		}
 	} );
 };
