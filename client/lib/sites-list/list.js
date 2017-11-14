@@ -168,20 +168,6 @@ SitesList.prototype.createSiteObject = function( site ) {
 	}
 };
 
-const jetpackUrls = new Map();
-
-const addJetpackSiteUrl = ( { ID, URL } ) => {
-	const baseUrl = withoutHttp( URL );
-	let siteSet = jetpackUrls.get( baseUrl );
-
-	if ( undefined === siteSet ) {
-		siteSet = new Set();
-		jetpackUrls.set( baseUrl, siteSet );
-	}
-
-	siteSet.add( ID );
-};
-
 /**
  * Marks collisions between .com sites and Jetpack sites that have the same URL
  * Add the hasConflict attribute to .com sites that collide with Jetpack sites.
@@ -191,6 +177,20 @@ const addJetpackSiteUrl = ( { ID, URL } ) => {
  * @param {Array} sites list of stored sites
  */
 SitesList.prototype.markCollisions = function( sites ) {
+	const jetpackUrls = new Map();
+
+	const addJetpackSiteUrl = ( { ID, URL } ) => {
+		const baseUrl = withoutHttp( URL );
+		let siteSet = jetpackUrls.get( baseUrl );
+
+		if ( undefined === siteSet ) {
+			siteSet = new Set();
+			jetpackUrls.set( baseUrl, siteSet );
+		}
+
+		siteSet.add( ID );
+	};
+
 	// first make sure all Jetpack sites are accounted for
 	sites.forEach( site => site.jetpack && addJetpackSiteUrl( site ) );
 
