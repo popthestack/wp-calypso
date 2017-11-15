@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { serverRender } from 'render';
+import { serverRender, serverRenderIfCached } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
@@ -27,6 +27,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			expressApp.get(
 				route,
 				setUpRoute,
+				serverRenderIfCached,
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,

@@ -43,6 +43,11 @@ function bumpStat( group, name ) {
 
 export function getCacheKey( context ) {
 	const pathname = context.pathname;
+	const isIsomorphic = isSectionIsomorphic( context.store.getState() );
+
+	if ( ! isIsomorphic ) {
+		return JSON.stringify( context.layout );
+	}
 
 	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
 		return pathname;
@@ -69,7 +74,7 @@ export function renderLayout( context ) {
 	try {
 		const startTime = Date.now();
 		const isIsomorphic = isSectionIsomorphic( context.store.getState() );
-		const key = isIsomorphic ? getCacheKey( context ) : JSON.stringify( context.layout );
+		const key = getCacheKey( context );
 
 		debug( 'cache access for key', key );
 
@@ -157,6 +162,16 @@ export function serverRenderError( err, req, res, next ) {
 		req.error = err;
 		res.status( err.status || 500 );
 		res.render( '500.jade', req.context );
+		return;
+	}
+
+	next();
+}
+
+export function serverRenderIfCached( req, res, next ) {
+	const context = req.context;
+	if ( markupCache.get( getCacheKey( context ) ) ) {
+		serverRender( req, res );
 		return;
 	}
 
