@@ -347,9 +347,12 @@ class ActivityLog extends Component {
 		}
 
 		if ( !! backupProgress ) {
-			if ( isEmpty( backupProgress.url ) ) {
+			if ( 0 <= backupProgress.progress ) {
 				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
-			} else if ( Date.now() < Date.parse( backupProgress.validUntil ) ) {
+			} else if (
+				! isEmpty( backupProgress.url ) &&
+				Date.now() < Date.parse( backupProgress.validUntil )
+			) {
 				cards.push( this.getEndBanner( siteId, backupProgress ) );
 			}
 		}
