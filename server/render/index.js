@@ -21,10 +21,9 @@ import {
 } from 'state/document-head/selectors';
 import isRTL from 'state/selectors/is-rtl';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { reducer } from 'state';
+import { createReduxStore, reducer } from 'state';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
-import { createReduxStore } from 'state';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
