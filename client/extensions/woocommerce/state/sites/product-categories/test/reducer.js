@@ -99,6 +99,7 @@ describe( 'reducer', () => {
 				newsletterSettingsSubmitError: false,
 				saveSettings: false,
 			},
+			email: null,
 		} );
 	} );
 
