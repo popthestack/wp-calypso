@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes } from 'lodash';
+import { get, includes, result } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +44,7 @@ export class CommentActions extends Component {
 		toggleEditMode: PropTypes.func,
 		toggleReply: PropTypes.func,
 		updateLastUndo: PropTypes.func,
+		redirect: PropTypes.func,
 	};
 
 	delete = () => {
@@ -262,7 +263,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch, { redirect } ) => ( {
 	changeStatus: (
 		siteId,
 		postId,
@@ -284,7 +285,7 @@ const mapDispatchToProps = dispatch => ( {
 				changeCommentStatus( siteId, postId, commentId, status )
 			)
 		),
-	deletePermanently: ( siteId, postId, commentId ) =>
+	deletePermanently: ( siteId, postId, commentId ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -293,7 +294,10 @@ const mapDispatchToProps = dispatch => ( {
 				),
 				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
 			)
-		),
+		);
+
+		result( { redirect }, 'redirect' );
+	},
 	like: ( siteId, postId, commentId, analytics = { alsoApprove: false } ) =>
 		dispatch(
 			withAnalytics(
