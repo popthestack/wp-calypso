@@ -118,7 +118,7 @@ export const comment = ( { query, params, path, store } ) => {
 	}
 
 	const action = sanitizeQueryAction( query.action );
-	const redirectToPostView = postId =>
+	const redirectToPostView = postId => () =>
 		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
 	renderWithReduxStore(
