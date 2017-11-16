@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -337,15 +337,15 @@ class EditContactInfoFormCard extends React.Component {
 								textOnly: true,
 							} ),
 						} ) }
-						{ this.hasFaxField() ? (
-							this.getField( FormInput, {
-								name: 'fax',
-								label: translate( 'Fax', {
-									context: 'Domain Edit Contact Info form.',
-									textOnly: true,
-								} ),
-							} )
-						) : null }
+						{ this.hasFaxField()
+							? this.getField( FormInput, {
+									name: 'fax',
+									label: translate( 'Fax', {
+										context: 'Domain Edit Contact Info form.',
+										textOnly: true,
+									} ),
+								} )
+							: null }
 						{ this.getField( FormCountrySelect, {
 							countriesList,
 							name: 'country-code',
@@ -399,11 +399,9 @@ class EditContactInfoFormCard extends React.Component {
 						<FormButton
 							disabled={ isSaveButtonDisabled }
 							onClick={
-								this.requiresConfirmation() ? (
-									this.showNonDaConfirmationDialog
-								) : (
-									this.saveContactInfo
-								)
+								this.requiresConfirmation()
+									? this.showNonDaConfirmationDialog
+									: this.saveContactInfo
 							}
 						>
 							{ saveButtonLabel }

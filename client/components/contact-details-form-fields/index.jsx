@@ -34,7 +34,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
+import { getCountryStates } from 'state/country-states/selectors';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
@@ -46,6 +46,8 @@ import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
+import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
+import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import support from 'lib/url/support';
 
@@ -134,6 +136,13 @@ class ContactDetailsFormFields extends Component {
 		if ( ! isEqual( nextState.form, this.state.form, ) ) {
 			return true;
 		}
+
+		if ( nextProps.needsFax !== this.props.needsFax ||
+			nextProps.submitText !== this.props.submitText ||
+			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -153,8 +162,7 @@ class ContactDetailsFormFields extends Component {
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError,
 		} );
-// eslint-disable-next-line
-console.log( this.formStateController.getInitialState() );
+
 		this.setState( {
 			form: this.formStateController.getInitialState()
 		});
@@ -358,9 +366,6 @@ console.log( this.formStateController.getInitialState() );
 	};
 
 	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
-		// const { contactDetails,  eventFormName } = this.props;
-		// const { form } = this.state;
-
 		return (
 			<div className={ `contact-details-form-fields__container ${ kebabCase( name ) }` }>
 				{ createElement(
@@ -380,24 +385,13 @@ console.log( this.formStateController.getInitialState() );
 		return get( form, 'countryCode.value', '' );
 	}
 
-	render() {
-		const { translate, className, needsFax, onCancel } = this.props;
+	renderContactDetailsFields() {
+		const { translate, needsFax, hasCountryStates } = this.props;
 		const countryCode = this.getCountryCode();
-
 		const { phoneCountryCode } = this.state;
-		// eslint-disable-next-line
-		console.log( 'RENDER ME SEYMOUR CONTACT', countryCode );
+
 		return (
-			<FormFieldset className={ `contact-details-form-fields ${ className }` }>
-				{ this.createField( 'first-name', Input, {
-					autoFocus: true,
-					label: translate( 'First Name' ),
-				} ) }
-
-				{ this.createField( 'last-name', Input, {
-					label: translate( 'Last Name' ),
-				} ) }
-
+			<div className="checkout__domain-details-contact-details-fields">
 				{ this.createField( 'organization', HiddenInput, {
 					label: translate( 'Organization' ),
 					text: translate( "+ Add your organization's name" ),
@@ -424,50 +418,50 @@ console.log( this.formStateController.getInitialState() );
 				}, true ) }
 
 				{ countryCode && (
-					<div className="contact-details-form-fields__address-fields">
-						{ this.createField( 'address-1', Input, {
-							maxLength: 40,
-							label: translate( 'Address' ),
-							//ref: this.shouldAutoFocusAddressField ? this.fieldRefFocusCallback : noop,
-						} ) }
-
-						{ this.createField( 'address-2', HiddenInput, {
-							maxLength: 40,
-							label: translate( 'Address Line 2' ),
-							text: translate( '+ Add Address Line 2' ),
-						} ) }
-
-						{ this.createField( 'city', Input, {
-							label: translate( 'City' ),
-						} ) }
-
-						{ this.createField( 'state', StateSelect, {
-							label: translate( 'State' ),
-							countryCode,
-						}, true  ) }
-
-						{ this.createField( 'postal-code', Input, {
-							label: translate( 'Postal Code' ),
-						} ) }
-					</div>
-				) }
-{/*				{ countryCode && (
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
+						hasCountryStates={ hasCountryStates }
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 					/>
-				) }*/}
+				) }
+			</div>
+		);
+	}
+
+	render() {
+		const { translate, className, onCancel, submitText } = this.props;
+		const countryCode = this.getCountryCode();
+
+		// eslint-disable-next-line
+		console.log( 'RENDER ME SEYMOUR CONTACT', countryCode );
+
+		return (
+			<FormFieldset className="contact-details-form-fields">
+				{ this.createField( 'first-name', Input, {
+					autoFocus: true,
+					label: translate( 'First Name' ),
+				} ) }
+
+				{ this.createField( 'last-name', Input, {
+					label: translate( 'Last Name' ),
+				} ) }
+
+				{ this.props.needsOnlyGoogleAppsDetails ? (
+					<GAppsFieldset getFieldProps={ this.getFieldProps } />
+				) : (
+					this.renderContactDetailsFields()
+				) }
 
 				{ this.props.children }
 
 				<FormFooter>
 					<FormButton
-						className="checkout__domain-details-form-submit-button"
+						className="contact-details-form-fields__submit-button"
 						disabled={ false }
 						onClick={ this.handleSubmitButtonClick }
 					>
-						Help
+						{ submitText }
 					</FormButton>
 					{ onCancel &&
 						<FormButton
@@ -485,4 +479,15 @@ console.log( this.formStateController.getInitialState() );
 	}
 }
 
-export default localize( ContactDetailsFormFields );
+export default connect(
+	state => {
+		const contactDetails = state.contactDetails;
+		const hasCountryStates =
+			contactDetails && contactDetails.countryCode
+				? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
+				: false;
+		return {
+			hasCountryStates,
+		};
+	}
+)( localize( ContactDetailsFormFields ) );

@@ -41,11 +41,50 @@
 			margin-left: 14px;
 		}
 
-		&.only-google-apps-details {
-			.contact-details-form-fields__container.country-code {
-				width: 66%;
+		.domain-management-form-footer {
+			justify-content: flex-end;
+		}
+
+		.g-apps-fieldset {
+
+			.country {
+				margin-top: 15px;
+				width: calc( 66% - 8px  );
+				float: left;
+			}
+			.postal-code {
+				margin-top: 15px;
+				width: 33%;
+				float: right;
 			}
 		}
+
+		.eu-address-fieldset {
+			.postal-code {
+				float: left;
+				width: calc( 33% - 7px );
+			}
+
+			.city {
+				float: right;
+				width: calc( 66% );
+			}
+		}
+
+		.uk-address-fieldset {
+			.postal-code {
+				width: calc( 33% - 7px );
+			}
+
+			.city {
+				width: calc( 66% );
+			}
+		}
+	}
+
+	.domain-management-form-footer {
+		padding-right: 0;
+		width: 100%;
 	}
 
 	.form__hidden-input a {
@@ -53,6 +92,15 @@
 		font-size: 12px;
 		margin-top: 5px;
 	}
+
+	select {
+		font-size: 15px;
+		width: 100%;
+	}
+
+}
+
+.contact-details-form-fields__submit-button {
 
 }
 
