@@ -10,7 +10,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -183,14 +183,13 @@ class LoggedInForm extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
-	isSso( props ) {
+	isSso( { from, queryDataSiteId } = this.props ) {
 		const cookies = cookie.parse( document.cookie );
-		const client_id = get( props, [ 'authorizeData', 'queryObject' ] );
 		return (
-			'sso' === props.from &&
+			'sso' === from &&
 			cookies.jetpack_sso_approved &&
-			client_id &&
-			client_id === cookies.jetpack_sso_approved
+			queryDataSiteId &&
+			queryDataSiteId === cookies.jetpack_sso_approved
 		);
 	}
 
@@ -596,6 +595,7 @@ export default connect(
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
+			queryDataSiteId: siteId,
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
 			user: getCurrentUser( state ),
