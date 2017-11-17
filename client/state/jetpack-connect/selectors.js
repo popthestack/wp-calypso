@@ -170,7 +170,7 @@ const getGlobalSelectedPlan = function( state ) {
 const getSiteIdFromQueryObject = function( state ) {
 	const authorizationData = getAuthorizationData( state );
 	if ( authorizationData.queryObject && authorizationData.queryObject.client_id ) {
-		return parseInt( authorizationData.queryObject.client_id );
+		return parseInt( authorizationData.queryObject.client_id, 10 );
 	}
 	return null;
 };
