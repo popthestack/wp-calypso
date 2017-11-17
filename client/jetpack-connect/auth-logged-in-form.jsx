@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import addQueryArgs from 'lib/route/add-query-args';
+import cookie from 'cookie';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes, startsWith } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -66,8 +67,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		isSSO: PropTypes.bool,
-
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
 		authorizationData: PropTypes.shape( {
@@ -117,7 +116,7 @@ class LoggedInForm extends Component {
 
 		// isSSO is a separate case from the rest since we have already validated
 		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
-		if ( this.props.isSSO || doAutoAuthorize ) {
+		if ( this.isSso() || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
 			return authorize( queryObject );
@@ -136,7 +135,7 @@ class LoggedInForm extends Component {
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( nextProps.isSSO || this.isWoo( nextProps ) || this.isFromJpo( nextProps ) ) {
+		if ( nextProps.isSso( nextProps ) || this.isWoo( nextProps ) || this.isFromJpo( nextProps ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return goBackToWpAdmin( redirectAfterAuth );
 			}
@@ -166,13 +165,13 @@ class LoggedInForm extends Component {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { from } = this.props;
 
-		if ( this.props.isSSO || this.isWoo() || this.isFromJpo() ) {
+		if ( this.isSso() || this.isWoo() || this.isFromJpo() ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
 				from,
 				'SSO found:',
-				this.props.isSSO
+				this.isSso()
 			);
 			goBackToWpAdmin( redirectAfterAuth );
 		} else {
@@ -182,6 +181,17 @@ class LoggedInForm extends Component {
 
 	isFromJpo( { from } = this.props ) {
 		return startsWith( from, 'jpo' );
+	}
+
+	isSso( props ) {
+		const cookies = cookie.parse( document.cookie );
+		const client_id = get( props, [ 'authorizeData', 'queryObject' ] );
+		return (
+			'sso' === props.from &&
+			cookies.jetpack_sso_approved &&
+			client_id &&
+			client_id === cookies.jetpack_sso_approved
+		);
 	}
 
 	isWoo( { from } = this.props ) {
