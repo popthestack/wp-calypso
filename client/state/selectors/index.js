@@ -46,6 +46,7 @@ export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getCurrentUserRegisterDate from './get-current-user-register-date';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
+export getJetpackConnectFrom from './get-jetpack-connect-from';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackConnectRedirectAfterAuth from './get-jetpack-connect-redirect-after-auth';
 export getJetpackConnectJetpackVersion from './get-jetpack-connect-jetpack-version';
