@@ -9,8 +9,8 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
+import { includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -67,7 +67,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 class LoggedInForm extends Component {
 	static propTypes = {
 		isSSO: PropTypes.bool,
-		isWoo: PropTypes.bool,
 
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
@@ -137,7 +136,7 @@ class LoggedInForm extends Component {
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( nextProps.isSSO || nextProps.isWoo || this.isFromJpo( nextProps ) ) {
+		if ( nextProps.isSSO || this.isWoo( nextProps ) || this.isFromJpo( nextProps ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return goBackToWpAdmin( redirectAfterAuth );
 			}
@@ -167,7 +166,7 @@ class LoggedInForm extends Component {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { from } = this.props;
 
-		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo() ) {
+		if ( this.props.isSSO || this.isWoo() || this.isFromJpo() ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
@@ -183,6 +182,10 @@ class LoggedInForm extends Component {
 
 	isFromJpo( { from } = this.props ) {
 		return startsWith( from, 'jpo' );
+	}
+
+	isWoo( { from } = this.props ) {
+		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
 	}
 
 	handleClickDisclaimer = () => {
