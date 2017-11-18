@@ -14,6 +14,9 @@
  *
  * Adds `makeLayout` and `clientRender` to `page()` route definitions and
  *   accompanying import statement.
+ *
+ * Replaces `navigation` middleware with `makeNavigation` for files
+ *   under `/client/my-sites/*`
  */
 
 /**
@@ -315,11 +318,38 @@ export default function transformer( file, api ) {
 		} )
 		.filter( p => p.value.arguments.length > 1 && p.value.arguments[ 0 ].value !== '*' )
 		.forEach( p => {
+			// Replace `navigation` with `makeNavigation` for files under `/client/my-sites/*`
+			if ( file.path.startsWith( 'client/my-sites/' ) ) {
+				p.value.arguments = p.value.arguments.map( param => {
+					return param.name === 'navigation' ? j.identifier( 'makeNavigation' ) : param;
+				} );
+			}
+
 			p.value.arguments.push( j.identifier( 'makeLayout' ) );
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
 		} );
 
 	if ( routeDefs.size() ) {
+		// Replace `navigation` with `makeNavigation` in:
+		// `import { navigation } from 'my-sites/controller'`
+		// ...at files under `/client/my-sites/*`.
+		if ( file.path.startsWith( 'client/my-sites/' ) ) {
+			root
+				.find( j.ImportDeclaration, {
+					source: {
+						value: 'my-sites/controller',
+					},
+				} )
+				.replaceWith( p => {
+					p.value.specifiers = p.value.specifiers.map( identifier => {
+						return identifier.local.name === 'navigation'
+							? j.importSpecifier( j.identifier( 'makeNavigation' ) )
+							: identifier;
+					} );
+					return p.value;
+				} );
+		}
+
 		root
 			.find( j.ImportDeclaration )
 			.at( -1 )
