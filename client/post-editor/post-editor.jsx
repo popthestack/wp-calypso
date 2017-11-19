@@ -624,7 +624,7 @@ export const PostEditor = createReactClass( {
 		}
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.autosave( callback, this.props.selectedSite );
+		actions.autosave( this.props.selectedSite, callback );
 	},
 
 	onClose: function() {
@@ -703,6 +703,7 @@ export const PostEditor = createReactClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.saveEdited(
+			this.props.selectedSite,
 			edits,
 			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
 			function( error ) {
@@ -715,9 +716,7 @@ export const PostEditor = createReactClass( {
 				if ( 'function' === typeof callback ) {
 					callback( error );
 				}
-			}.bind( this ),
-			null,
-			this.props.selectedSite
+			}.bind( this )
 		);
 
 		this.setState( { isSaving: true } );
@@ -777,7 +776,7 @@ export const PostEditor = createReactClass( {
 		if ( status === 'publish' ) {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.editor.getContent() } );
-			actions.autosave( previewPost, this.props.selectedSite );
+			actions.autosave( this.props.selectedSite, previewPost );
 		} else {
 			this.onSave( null, previewPost );
 		}
@@ -871,6 +870,7 @@ export const PostEditor = createReactClass( {
 		edits.content = this.editor.getContent();
 
 		actions.saveEdited(
+			this.props.selectedSite,
 			edits,
 			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
 			function( error ) {
@@ -879,9 +879,7 @@ export const PostEditor = createReactClass( {
 				} else {
 					this.onPublishSuccess();
 				}
-			}.bind( this ),
-			null,
-			this.props.selectedSite
+			}.bind( this )
 		);
 
 		this.setState( {
