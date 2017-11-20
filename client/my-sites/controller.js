@@ -431,12 +431,6 @@ export function makeNavigation( context, next ) {
 	next();
 }
 
-export function navigation( context, next ) {
-	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
-	next();
-}
-
 export function jetPackWarning( context, next ) {
 	const { getState } = getStore( context );
 	const Main = require( 'components/main' );
