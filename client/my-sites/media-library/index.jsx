@@ -32,9 +32,14 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 const sourcesThatDoNotNeedUserConnection = [ 'pexels' ];
 
 const isConnected = props =>
-	sourcesThatDoNotNeedUserConnection.indexOf( props.source ) !== -1 || props.source === '' || some( props.connectedServices, item => item.service === props.source );
+	sourcesThatDoNotNeedUserConnection.indexOf( props.source ) !== -1 ||
+	props.source === '' ||
+	some( props.connectedServices, item => item.service === props.source );
 const needsKeyring = props =>
-	sourcesThatDoNotNeedUserConnection.indexOf( props.source ) === -1 && ! props.isRequesting && props.source !== '' && props.connectedServices.length === 0;
+	sourcesThatDoNotNeedUserConnection.indexOf( props.source ) === -1 &&
+	! props.isRequesting &&
+	props.source !== '' &&
+	props.connectedServices.length === 0;
 
 class MediaLibrary extends Component {
 	static propTypes = {
