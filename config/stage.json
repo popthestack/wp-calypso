@@ -34,6 +34,7 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"external-media": true,
+		"external-stock-images": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

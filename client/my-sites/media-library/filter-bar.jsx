@@ -54,6 +54,10 @@ export class MediaLibraryFilterBar extends Component {
 			return translate( 'Search your Google library…' );
 		}
 
+		if ( 'pexels' === source ) {
+			return translate( 'Search stock images from Pexels…' );
+		}
+
 		switch ( filter ) {
 			case 'this-post':
 				return translate( 'Search media uploaded to this post…' );

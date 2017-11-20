@@ -33,6 +33,19 @@ export const menuItems = [
 ];
 
 if ( config.isEnabled( 'external-media' ) ) {
+	if ( config.isEnabled( 'external-stock-images' ) ) {
+		menuItems.push( {
+			name: 'insert_from_pexels',
+			item: (
+				<GridiconButton
+					icon="add-image"
+					label={ i18n.translate( 'Stock images from Pexels' ) }
+					e2e="stock-media-pexels"
+				/>
+			),
+			cmd: 'pexelsAddMedia',
+		} );
+	}
 	menuItems.push( {
 		name: 'insert_from_google',
 		item: (

@@ -429,6 +429,14 @@ export class EditorHtmlToolbar extends Component {
 		} );
 	};
 
+	openPexelsModal = () => {
+		this.setState( {
+			showInsertContentMenu: false,
+			showMediaModal: true,
+			source: 'pexels',
+		} );
+	};
+
 	closeMediaModal = () => {
 		this.setState( { showMediaModal: false } );
 	};
@@ -497,6 +505,16 @@ export class EditorHtmlToolbar extends Component {
 					<Gridicon icon="add-image" />
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</div>
+
+				{ config.isEnabled( 'external-stock-images' ) && (
+					<div
+						className="editor-html-toolbar__insert-content-dropdown-item"
+						onClick={ this.openPexelsModal }
+					>
+						<Gridicon icon="add-image" />
+						<span data-e2e-insert-type="pexels">{ translate( 'Stock images from Pexels' ) }</span>
+					</div>
+				) }
 
 				{ config.isEnabled( 'external-media' ) && (
 					<div

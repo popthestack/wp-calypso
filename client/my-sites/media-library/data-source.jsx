@@ -76,6 +76,15 @@ export class MediaLibraryDataSource extends Component {
 				icon: <img src="/calypso/images/sharing/google-photos-logo.svg" width="24" height="24" />,
 			},
 		];
+		if ( config.isEnabled( 'external-stock-images' ) ) {
+			sources.push(
+				{
+					value: 'pexels',
+					label: translate( 'Stock images from Pexels' ),
+					icon: <Gridicon icon="add-image" size={ 24 } />,
+				}
+			);
+		}
 		const currentSelected = find( sources, item => item.value === source );
 		const classes = classnames( {
 			button: true,

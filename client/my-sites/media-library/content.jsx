@@ -201,7 +201,7 @@ class MediaLibraryContent extends React.Component {
 		page( `/sharing/${ this.props.site.slug }` );
 	};
 
-	renderExternalMedia() {
+	renderGooglePhotosConnect() {
 		const connectMessage = this.props.translate(
 			'To show Photos from Google, you need to connect your Google account.'
 		);
@@ -218,6 +218,14 @@ class MediaLibraryContent extends React.Component {
 		);
 	}
 
+	renderConnectExternalMedia() {
+		const { source } = this.props;
+		switch ( source ) {
+			case 'google_photos':
+				return this.renderGooglePhotosConnect();
+		}
+	}
+
 	getThumbnailType() {
 		if ( this.props.source !== '' ) {
 			return MEDIA_IMAGE_THUMBNAIL;
@@ -228,6 +236,10 @@ class MediaLibraryContent extends React.Component {
 		}
 
 		return MEDIA_IMAGE_PHOTON;
+	}
+
+	needsToBeConnected() {
+		return ( this.props.source !== '' && ! this.props.isConnected );
 	}
 
 	renderMediaList() {
@@ -241,8 +253,8 @@ class MediaLibraryContent extends React.Component {
 			);
 		}
 
-		if ( this.props.source !== '' && ! this.props.isConnected ) {
-			return this.renderExternalMedia();
+		if ( this.needsToBeConnected() ) {
+			return this.renderConnectExternalMedia();
 		}
 
 		return (
@@ -272,7 +284,7 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	renderHeader() {
-		if ( ! this.props.isConnected ) {
+		if ( ! this.props.isConnected  && this.needsToBeConnected() ) {
 			return null;
 		}
 

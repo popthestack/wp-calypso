@@ -94,6 +94,10 @@ MediaActions.fetchNextPage = function( siteId ) {
 	if ( ! query.source ) {
 		wpcom.site( siteId ).mediaList( query, mediaReceived );
 	} else {
+		if ( 'pexels' === query.source ) {
+			// saves some API calls to Pexels
+			query.number = 40;
+		}
 		wpcom.undocumented().externalMediaList( query, mediaReceived );
 	}
 };
