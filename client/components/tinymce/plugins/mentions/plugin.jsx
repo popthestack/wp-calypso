@@ -7,6 +7,7 @@
 import tinymce from 'tinymce/tinymce';
 import ReactDom from 'react-dom';
 import React from 'react';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ function mentions( editor ) {
 	const node = document.createElement( 'div' );
 	let isRendered = false;
 
-	editor.on( 'init focus', next => {
+	editor.on( 'init focus', () => {
 		const store = editor.getParam( 'redux_store' );
 		const selectedSite = getSelectedSite( store.getState() );
 
@@ -40,7 +41,6 @@ function mentions( editor ) {
 			ReactDom.unmountComponentAtNode( node );
 			isRendered = false;
 		}
-		next();
 	} );
 
 	// Cancel Enter key press if the popover is visible.
