@@ -54,7 +54,7 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context, next ) {
+function renderEditor( context ) {
 	context.primary = React.createElement(
 		ReduxProvider,
 		{ store: context.store },
@@ -63,7 +63,6 @@ function renderEditor( context, next ) {
 			userUtils: userUtils,
 		} )
 	);
-	next();
 }
 
 function maybeRedirect( context ) {
@@ -200,7 +199,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 }
 
 export default {
-	post: function( context ) {
+	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
 		const postToCopyId = context.query.copy;
@@ -283,6 +282,7 @@ export default {
 		}
 
 		renderEditor( context );
+		next();
 	},
 
 	exitPost: function( context, next ) {
