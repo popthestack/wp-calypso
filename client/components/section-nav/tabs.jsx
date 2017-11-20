@@ -42,18 +42,18 @@ class NavTabs extends Component {
 	};
 
 	componentDidMount() {
-		this.setDropdown();
-		this.debouncedAfterResize = debounce( this.setDropdown, 300 );
-
-		window.addEventListener( 'resize', this.debouncedAfterResize );
+		this.setDropdownAfterLayoutFlush();
+		window.addEventListener( 'resize', this.setDropdownDebounced );
+		this._isMounted = true;
 	}
 
 	componentDidUpdate() {
-		this.setDropdown();
+		this.setDropdownAfterLayoutFlush();
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.debouncedAfterResize );
+		this._isMounted = false;
+		window.removeEventListener( 'resize', this.setDropdownDebounced );
 	}
 
 	render() {
@@ -125,6 +125,11 @@ class NavTabs extends Component {
 	};
 
 	setDropdown = () => {
+		// ignore the call when called asynchronously after the component is no longer mounted
+		if ( ! this._isMounted ) {
+			return;
+		}
+
 		let navGroupWidth;
 
 		if ( window.innerWidth > MOBILE_PANEL_THRESHOLD ) {
@@ -151,6 +156,16 @@ class NavTabs extends Component {
 			} );
 		}
 	};
+
+	setDropdownDebounced = debounce( this.setDropdown, 300 );
+
+	// setDropdown reads element sizes from DOM. If called synchronously in the middle of a React
+	// update, it causes a synchronous layout reflow, doing the layout two or more times instead
+	// of just once after all the DOM writes are finished. Prevent that by scheduling a callback
+	// just *after* the next layout flush. Inspired by the Firefox performance best practices at
+	// https://developer.mozilla.org/en-US/Firefox/Performance_best_practices_for_Firefox_fe_engineers
+	setDropdownAfterLayoutFlush = () =>
+		requestAnimationFrame( () => setTimeout( () => this.setDropdown(), 0 ) );
 
 	keyHandler = event => {
 		switch ( event.keyCode ) {
