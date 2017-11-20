@@ -10,24 +10,29 @@ import page from 'page';
 import config from 'config';
 import controller from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { makeNavigation, siteSelection } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,
-		navigation,
+		makeNavigation,
 		settingsController.siteSettings,
-		controller.writing
+		controller.writing,
+		makeLayout,
+		clientRender
 	);
 
 	if ( config.isEnabled( 'manage/site-settings/categories' ) ) {
 		page(
 			'/settings/taxonomies/:taxonomy/:site_id',
 			siteSelection,
-			navigation,
+			makeNavigation,
 			settingsController.setScroll,
-			controller.taxonomies
+			controller.taxonomies,
+			makeLayout,
+			clientRender
 		);
 	}
 }

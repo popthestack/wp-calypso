@@ -9,9 +9,17 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
+import { makeNavigation, siteSelection } from 'my-sites/controller';
 import postsController from './controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/posts/:author?/:status?/:domain?', siteSelection, navigation, postsController.posts );
+	page(
+		'/posts/:author?/:status?/:domain?',
+		siteSelection,
+		makeNavigation,
+		postsController.posts,
+		makeLayout,
+		clientRender
+	);
 }

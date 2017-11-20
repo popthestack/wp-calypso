@@ -9,25 +9,30 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
+import { jetpackModuleActive, makeNavigation, sites, siteSelection } from 'my-sites/controller';
 import { buttons, connections, layout } from './controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( /^\/sharing(\/buttons)?$/, siteSelection, sites );
+	page( /^\/sharing(\/buttons)?$/, siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/sharing/:domain',
 		siteSelection,
-		navigation,
+		makeNavigation,
 		jetpackModuleActive( 'publicize', false ),
 		connections,
-		layout
+		layout,
+		makeLayout,
+		clientRender
 	);
 	page(
 		'/sharing/buttons/:domain',
 		siteSelection,
-		navigation,
+		makeNavigation,
 		jetpackModuleActive( 'sharedaddy' ),
 		buttons,
-		layout
+		layout,
+		makeLayout,
+		clientRender
 	);
 }
