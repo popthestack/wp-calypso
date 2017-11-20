@@ -11,6 +11,7 @@ import { forEach } from 'lodash';
 import { recommendedPosts } from './controller';
 import { preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
 import config from 'config';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	// Cold Start no longer exists - redirect to /
@@ -37,6 +38,8 @@ export default function() {
 					updateLastRoute,
 					sidebar,
 					recommendedPosts,
+					makeLayout,
+					clientRender,
 				] );
 			}
 		);
