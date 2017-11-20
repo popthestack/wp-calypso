@@ -112,7 +112,14 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderPexelsAttribution() {
-		return <span className="media-library__pexels-attribution">Stock images provided by <a href="http://www.pexels.com/" target="_blank">Pexels</a></span>;
+		return (
+			<span className="media-library__pexels-attribution">
+				Stock images provided by{' '}
+				<a href="http://www.pexels.com/" rel="noopener noreferrer" target="_blank">
+					Pexels
+				</a>
+			</span>
+		);
 	}
 
 	renderCard() {
@@ -120,7 +127,6 @@ class MediaLibraryExternalHeader extends React.Component {
 
 		return (
 			<Card className="media-library__header">
-
 				{ 'pexels' === source && this.renderPexelsAttribution() }
 
 				<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
@@ -128,7 +134,6 @@ class MediaLibraryExternalHeader extends React.Component {
 
 					{ translate( 'Refresh' ) }
 				</Button>
-
 
 				{ canCopy && this.renderCopyButton() }
 
