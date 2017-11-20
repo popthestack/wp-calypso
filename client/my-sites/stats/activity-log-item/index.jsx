@@ -89,7 +89,7 @@ class ActivityLogItem extends Component {
 
 	renderHeader() {
 		const { applySiteOffset, log, moment } = this.props;
-		const [ eventName, ...description ] = log.activityDescription;
+		const { activityDescription, activityTitle } = log;
 
 		return (
 			<div className="activity-log-item__card-header">
@@ -97,70 +97,71 @@ class ActivityLogItem extends Component {
 					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
 				<div className="activity-log-item__description">
-					{ description.map( ( part, key ) => {
-						if ( 'string' === typeof part ) {
-							return part;
-						}
+					{ ! activityDescription && activityTitle }
+					{ activityDescription &&
+						activityDescription.map( ( part, key ) => {
+							if ( 'string' === typeof part ) {
+								return part;
+							}
 
-						const [ type, attrs = {}, children ] = part;
-						const { blogId, postId, commentId, name } = attrs;
+							const { siteId, children, commentId, name, postId, type } = part;
 
-						switch ( type ) {
-							case 'comment':
-								return (
-									<a
-										key={ key }
-										href={ `/read/blogs/${ blogId }/posts/${ postId }#comment-${ commentId }` }
-									>
-										{ children }
-									</a>
-								);
+							switch ( type ) {
+								case 'comment':
+									return (
+										<a
+											key={ key }
+											href={ `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }
+										>
+											{ children }
+										</a>
+									);
 
-							case 'filepath':
-								return (
-									<div>
-										<code>{ children }</code>
-									</div>
-								);
+								case 'filepath':
+									return (
+										<div>
+											<code>{ children }</code>
+										</div>
+									);
 
-							case 'person':
-								return (
-									<a key={ key } href={ `/people/edit/${ blogId }/${ name }` }>
-										<strong>{ children }</strong>
-									</a>
-								);
+								case 'person':
+									return (
+										<a key={ key } href={ `/people/edit/${ siteId }/${ name }` }>
+											<strong>{ children }</strong>
+										</a>
+									);
 
-							case 'plugin':
-								return (
-									<a key={ key } href={ `/plugins/${ name }/${ blogId }` }>
-										{ children }
-									</a>
-								);
+								case 'plugin':
+									return (
+										<a key={ key } href={ `/plugins/${ name }/${ siteId }` }>
+											{ children }
+										</a>
+									);
 
-							case 'post':
-								return (
-									<a key={ key } href={ `/read/blogs/${ blogId }/posts/${ postId }` }>
-										<em>{ children }</em>
-									</a>
-								);
-
-							case 'theme':
-								return (
-									<a key={ key } href={ attrs.url } target="_blank" rel="noopener noreferrer">
-										<strong>
+								case 'post':
+									return (
+										<a key={ key } href={ `/read/blogs/${ siteId }/posts/${ postId }` }>
 											<em>{ children }</em>
-										</strong>
-									</a>
-								);
+										</a>
+									);
 
-							case 'time':
-								return applySiteOffset( moment.utc( attrs.time ) ).format( attrs.format );
+								case 'theme':
+									return (
+										<a key={ key } href={ part.url } target="_blank" rel="noopener noreferrer">
+											<strong>
+												<em>{ children }</em>
+											</strong>
+										</a>
+									);
 
-							default:
-								return null;
-						}
-					} ) }
-					<div className="activity-log-item__event">{ eventName }</div>
+								case 'time':
+									return applySiteOffset( moment.utc( part.time ) ).format( part.format );
+
+								default:
+									return null;
+							}
+						} ) }
+					{ /*<div className="activity-log-item__event">{ eventName }</div>*/ }
 				</div>
 			</div>
 		);
