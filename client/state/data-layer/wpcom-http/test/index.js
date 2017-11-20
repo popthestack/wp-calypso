@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
@@ -34,6 +34,22 @@ const getMe = {
 	onSuccess: succeeder,
 };
 
+/*
+ * Helper that waits until a given `nockScope` is "done", i.e., until the request was
+ * asychronously processed. Then call the supplied `cb` callback.
+ */
+function afterNockDone( nockScope, cb, retryCount = 10 ) {
+	setTimeout( () => {
+		if ( nockScope.isDone() ) {
+			cb();
+		} else if ( retryCount > 0 ) {
+			afterNockDone( nockScope, cb, retryCount - 1 );
+		} else {
+			assert.fail( 'Timed out while waiting for a nock mock to be done' );
+		}
+	}, 10 );
+}
+
 describe( '#queueRequest', () => {
 	let dispatch;
 
@@ -51,11 +67,11 @@ describe( '#queueRequest', () => {
 
 		http( { dispatch }, getMe );
 
-		setTimeout( () => {
+		afterNockDone( nock, () => {
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( extendAction( succeeder, successMeta( data ) ) );
 			done();
-		}, 10 );
+		} );
 	} );
 
 	test( 'should call `onFailure` when a response returns with an error', done => {
@@ -66,10 +82,10 @@ describe( '#queueRequest', () => {
 
 		http( { dispatch }, getMe );
 
-		setTimeout( () => {
+		afterNockDone( nock, () => {
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( extendAction( failer, failureMeta( error ) ) );
 			done();
-		}, 10 );
+		} );
 	} );
 } );
